@@ -39,7 +39,7 @@ const Home = () => {
     <div className="flex flex-col justify-center items-center mt-10 gap-5 w-[100%] ">
       <div className="flex flex-col justify-center items-center w-[75%]">
         <h3 className="flex flex-col items-center justify-center m-8 text-4xl font-bold text-black">
-          Student Management System
+          Employee Management System
         </h3>
         <form
           ref={formRef}
