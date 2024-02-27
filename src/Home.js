@@ -24,16 +24,71 @@ const Home = () => {
     
   },[data, values])
 
-
-  function handlechange (e) {
+    const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("https://emp-server-1.onrender.com/add_user", values)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-    formRef.current.reset();
-    formRef.current.scrollIntoView({ behavior: "smooth" });
-  }
+
+    // Check if salary starts with zero
+    if (values.Salary.toString().charAt(0) === "0" && values.Salary<0) {
+      alert("Invalid Salary.");
+      return;
+    }
+
+    // Check for special characters in name and department
+    const nameRegex = /^[a-zA-Z0-9 ]*$/;
+    if (!nameRegex.test(values.Name)) {
+      alert("Name should not contain special characters.");
+      return;
+    }
+
+    const departmentRegex = /^[a-zA-Z0-9 ]*$/;
+    if (!departmentRegex.test(values.Department)) {
+      alert("Department should not contain special characters.");
+      return;
+    }
+
+    const designationRegex = /^[a-zA-Z0-9 ]*$/;
+    if (!designationRegex.test(values.Designation)) {
+      alert("Designation should not contain special characters.");
+      return;
+    }
+
+    // Validating date of birth
+    const currentDate = new Date();
+    const dob = new Date(values.DOB);
+    const ageDiff = currentDate.getFullYear() - dob.getFullYear();
+    if (ageDiff < 20) {
+      alert("Age must be at least 20 years old.");
+      return;
+    }
+
+    try {
+      await axios
+        .post("https://emp-server-1.onrender.com/add_user", values)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+      formRef.current.reset();
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+    } catch (error) {
+      if (error.response) {
+        console.error("Server responded with:", error.response.data);
+      } else if (error.request) {
+        console.error("No response received from server");
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+      alert("Failed to submit form. Please try again.");
+    }
+  };
+  
+  // function handlechange (e) {
+  //   e.preventDefault();
+  //   axios
+  //     .post("https://emp-server-1.onrender.com/add_user", values)
+  //     .then((res) => console.log(res))
+  //     .catch((err) => console.log(err));
+  //   formRef.current.reset();
+  //   formRef.current.scrollIntoView({ behavior: "smooth" });
+  // }
 
   return (
     <div className="flex flex-col justify-center items-center mt-10 gap-5 w-[100%] ">
@@ -44,7 +99,7 @@ const Home = () => {
         <form
           ref={formRef}
           className="flex flex-col items-center justify-center p-5 text-black rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500"
-          onSubmit={handlechange}
+          onSubmit={handleSubmit}
         >
           <div className="flex flex-wrap justify-between w-full">
             <div className="w-full mb-4 sm:w-1/2">
